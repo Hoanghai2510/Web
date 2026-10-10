@@ -1,27 +1,25 @@
 {
   "name": "hoi-gdcsskcd-portal",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "Cổng thông tin và quản trị Hội GDCSSKCĐ VN - bản nâng cấp có backend demo",
+  "description": "Cổng thông tin công khai và cổng quản trị hợp nhất Hội GDCSSKCĐ VN",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2"
-  },
-  "allowScripts": {
-    "better-sqlite3@11.10.0": true
   }
 }

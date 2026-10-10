@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d3b66">
+<title>Hội Giáo dục Chăm sóc Sức khỏe Cộng đồng Việt Nam</title>
+<meta name="description" content="Cổng thông tin Hội Giáo dục Chăm sóc Sức khỏe Cộng đồng Việt Nam — giới thiệu Hội, tin tức, sự kiện, hệ thống tổ chức, văn bản, hội phí và thông tin liên hệ.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hội GDCSSKCĐ Việt Nam">
+<meta property="og:title" content="Hội Giáo dục Chăm sóc Sức khỏe Cộng đồng Việt Nam">
+<meta property="og:description" content="Cổng thông tin Hội Giáo dục Chăm sóc Sức khỏe Cộng đồng Việt Nam.">
+<meta property="og:url" content="/">
+<meta property="og:locale" content="vi_VN">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d3b66'/%3E%3Cpath d='M18 24h28M18 40h28M32 10v44' stroke='%23fff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="container topbar-inner">
+    <span id="topbarSite">HỘI GIÁO DỤC CHĂM SÓC SỨC KHỎE CỘNG ĐỒNG VIỆT NAM</span>
+    <span id="topbarContact">Vì sức khỏe cộng đồng · Truy cập nhanh: Tin tức · Văn bản · Liên hệ</span>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Về trang chủ">
+      <span class="logo" aria-hidden="true">✚</span>
+      <span><b class="brand-name" id="brandName">HỘI GDCSSKCĐ VN</b><small class="brand-sub" id="brandTag">CHUNG TAY VÌ SỨC KHỎE CỘNG ĐỒNG</small></span>
+    </a>
+    <nav class="nav" id="mainNav" aria-label="Điều hướng chính"></nav>
+    <button class="hamburger" id="hamburger" aria-label="Mở menu">☰</button>
+  </div>
+</header>
+
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer" aria-label="Menu di động">
+  <div class="drawer-head">
+    <div class="drawer-brand"><span class="logo" style="width:38px;height:38px;font-size:20px">✚</span><b style="color:var(--navy);font-size:13px">HỘI GDCSSKCĐ VN</b></div>
+    <button id="drawerClose" style="border:none;background:none;font-size:22px;color:var(--muted)">×</button>
+  </div>
+  <nav id="drawerNav"></nav>
+</aside>
+
+<main id="app" style="min-height:60vh"></main>
+
+<footer class="footer">
+  <div class="container footer-top">
+    <div>
+      <div class="f-brand"><span class="f-logo">✚</span><div><b style="color:#fff">HỘI GDCSSKCĐ VN</b><small style="display:block;color:#7f9bc2">Chung tay vì sức khỏe cộng đồng</small></div></div>
+      <p style="margin:14px 0 0;font-size:12.5px;line-height:1.8" id="footerAbout">Giáo dục, chăm sóc và nâng cao sức khỏe cộng đồng Việt Nam.</p>
+    </div>
+    <div>
+      <h4>CHUYÊN MỤC</h4>
+      <a href="/gioi-thieu">Giới thiệu Hội</a>
+      <a href="/tin-tuc">Tin tức – Sự kiện</a>
+      <a href="/to-chuc">Hệ thống tổ chức</a>
+      <a href="/van-ban">Văn bản – Biểu mẫu</a>
+      <a href="/tai-chinh">Tài chính – Hội phí</a>
+    </div>
+    <div>
+      <h4>HỘI VIÊN</h4>
+      <a href="/nhan-su">Nhân sự – Hội viên</a>
+      <a href="/bao-cao">Nộp báo cáo trực tuyến</a>
+      <a href="/van-ban?doctype=Bi%E1%BB%83u%20m%E1%BA%ABu">Tải biểu mẫu</a>
+      <a href="/tim-kiem">Tra cứu thông tin</a>
+      <a href="/admin">Cổng quản trị nội bộ</a>
+    </div>
+    <div>
+      <h4>LIÊN HỆ</h4>
+      <div class="f-contacts" id="footerContacts">
+        <div><i>▸</i><span id="fAddr">—</span></div>
+        <div><i>✉</i><span id="fEmail">—</span></div>
+        <div><i>✆</i><span id="fPhone">—</span></div>
+        <div><i>🕑</i><span id="fHours">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© <span id="fYear">2026</span> Hội Giáo dục Chăm sóc Sức khỏe Cộng đồng Việt Nam. Bảo lưu mọi quyền.</span>
+    <span>Website đang vận hành thử nghiệm. Thông tin chính thức do Ban Thường vụ Hội xác nhận.</span>
+  </div>
+</footer>
+
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-panel">
+    <input id="searchInput" type="search" placeholder="Tìm kiếm tin tức, văn bản, đơn vị, nhân sự…" autocomplete="off">
+    <div class="search-quick">
+      <a href="/tin-tuc">Tin tức</a><a href="/van-ban">Văn bản</a><a href="/to-chuc">Tổ chức</a><a href="/nhan-su">Nhân sự</a>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="/site.js"></script>
+</body>
+</html>

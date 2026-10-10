@@ -1,57 +1,73 @@
-# Cổng quản trị Hội GDCSSKCĐ VN — bản nâng cấp 2.0
+# Hội GDCSSKCĐ VN — Website hợp nhất v3.0
 
-Bản nâng cấp ưu tiên giao diện quản trị hiện đại, responsive, và bổ sung backend/API + SQLite để nhiều máy có thể dùng chung dữ liệu khi cùng truy cập một máy chủ.
+Dự án gồm website công khai và cổng quản trị dùng chung Backend Node.js/Express + SQLite.
 
-## Chức năng có trong bản này
-- Backend Node.js/Express và cơ sở dữ liệu SQLite nằm ở phía máy chủ.
-- Đăng nhập thật theo tài khoản được lưu trong DB; mật khẩu được băm bằng bcrypt; token hết hạn sau 8 giờ; giới hạn thử đăng nhập.
-- Phân quyền theo vai trò: quản trị viên, người duyệt báo cáo, trưởng đơn vị, phụ trách tài chính. Trưởng đơn vị chỉ truy cập dữ liệu thuộc đơn vị mình ở các API nhân sự/báo cáo/hội phí.
-- Quản lý đơn vị và hồ sơ nhân sự; nhật ký kiểm toán cho các thao tác quan trọng.
-- Báo cáo: tạo bản nháp → gửi duyệt → phê duyệt/yêu cầu sửa → xuất CSV.
-- Hội phí: danh sách khoản phải thu, tạo mã tham chiếu giao dịch, xác minh thủ công, cập nhật trạng thái khoản thu và xuất CSV đối soát.
-- Giao diện responsive cho màn hình máy tính và điện thoại.
+## Chạy trên macOS
 
-## Chạy thử trên máy
-Yêu cầu Node.js 20 trở lên.
+Yêu cầu Node.js 20+ (khuyến nghị LTS). Trong thư mục dự án:
 
-1. Giải nén thư mục dự án.
-2. Mở Terminal/CMD tại thư mục dự án và chạy:
-   ```bash
-   npm install
-   ```
-3. Sao chép `.env.example` thành `.env`. Đổi `JWT_SECRET` thành chuỗi ngẫu nhiên dài trước khi chạy trong môi trường thật.
-4. Chạy:
-   ```bash
-   npm start
-   ```
-5. Mở `http://localhost:3000`.
+```bash
+npm install
+cp .env.example .env
+npm start
+```
 
-## Tài khoản demo lần đầu
+Mở:
+- Website công khai: http://localhost:3000/
+- Cổng quản trị: http://localhost:3000/admin
+- Kiểm tra API: http://localhost:3000/api/health
+
+Nếu đã có file `data/portal.db`, giữ nguyên file này để không mất dữ liệu. Để dùng chung nhiều máy, triển khai ứng dụng trên một máy chủ trong mạng nội bộ/VPS rồi cho các máy khác truy cập IP/tên miền máy chủ; không chạy một database riêng trên từng máy.
+
+## Kiểm thử tự động
+
+Kiểm thử chạy trên database tạm riêng (`data/test-portal.db`, tự xóa sau khi chạy), không tác động dữ liệu thật:
+
+```bash
+npm test
+```
+
+Suite bao phủ: public API + SEO (robots/sitemap), vòng đời bài viết/văn bản/đơn vị, phân quyền RBAC theo vai trò (admin/reviewer/unit_lead/finance), khóa tài khoản demo ở production, tải lên tệp (whitelist), chặn path traversal khi tải văn bản, ngăn XSS và quản lý tài khoản. Bắt đầu ở chế độ `NODE_ENV=production`.
+
+## Triển khai production
+
+1. `cp .env.example .env`, đặt `NODE_ENV=production`, tạo `JWT_SECRET` ngẫu nhiên (không dùng giá trị mẫu). Ứng dụng sẽ **từ chối khởi động** nếu production thiếu `JWT_SECRET`.
+2. Cài PM2 hoặc systemd để chạy `npm start` bền bỉ, đặt **HTTPS qua reverse proxy** (Caddy/Nginx) trước cổng 3000.
+3. Tạo tài khoản quản trị thật, đổi mật khẩu demo rồi **khóa tài khoản demo**: ở production, login bằng tài khoản demo (`admin`/`reviewer`/`unitlead`/`finance`) trả về 403 trừ khi set `ALLOW_DEMO=1`.
+4. Sao lưu định kỳ: dừng ứng dụng rồi copy cả `data/portal.db`, `-wal`, `-shm` (hoặc dùng `VACUUM INTO`), kiểm tra khôi phục thử.
+5. Kiểm tra lại phân quyền sau khi có dữ liệu thật. Với quy mô lớn/nhiều giao dịch nhạy cảm, nên chuyển sang PostgreSQL.
+
+## Tài khoản demo (chế độ phát triển)
+
 - Quản trị viên: `admin` / `admin123`
 - Người duyệt báo cáo: `reviewer` / `review123`
-- Trưởng Chi hội Hà Nội: `unitlead` / `unit123`
+- Trưởng đơn vị: `unitlead` / `unit123`
 - Phụ trách tài chính: `finance` / `finance123`
 
-Tài khoản demo được tạo tự động khi database rỗng. Đổi mật khẩu sau khi đăng nhập. Không triển khai công khai khi vẫn dùng mật khẩu demo.
+Các tài khoản này bị khóa tự động khi `NODE_ENV=production` (trừ khi bật `ALLOW_DEMO=1`). Không dùng tài khoản mẫu hoặc dữ liệu nhân sự giả lập trong môi trường thật.
 
-## Dùng chung giữa nhiều máy
-Chạy server trên một máy chủ luôn bật hoặc VPS; các máy khác truy cập địa chỉ máy chủ, ví dụ `http://192.168.1.20:3000`. Tất cả máy khi truy cập cùng server sẽ dùng cùng một database. Nếu truy cập từ ngoài mạng nội bộ, cần triển khai HTTPS, firewall, sao lưu và cấu hình máy chủ an toàn. Không đưa file `data/portal.db` lên Git hoặc gửi qua mạng không an toàn.
+## Đối chiếu tài liệu Word yêu cầu
 
-**Lưu ý về SQLite:** phù hợp bản thử nghiệm nhỏ trên một máy chủ. Nếu số người dùng/giao dịch tăng, nên chuyển sang PostgreSQL/MySQL được quản trị tập trung. Không đặt file SQLite trong thư mục đồng bộ cloud hoặc chia sẻ qua NAS để nhiều tiến trình ghi trực tiếp.
+Website công khai có các nhóm nội dung: (I) giới thiệu Hội, ban lãnh đạo và văn bản quan trọng; (II) chính sách, sự kiện Hội, hoạt động đơn vị và tin liên quan; (III) hệ thống tổ chức gồm Liên chi hội, Chi hội, Văn phòng/Ban chuyên môn, Viện/Trung tâm, Văn phòng đại diện và doanh nghiệp hội viên; (IV) quản trị nhân sự, lãnh đạo đơn vị, kết nạp hội viên cá nhân/tập thể, bầu cử và bổ nhiệm; (V) hội phí, phí thành lập và đóng góp từ thiện.
 
-## Những phần chưa phải production
-1. **Thanh toán thật:** chưa tích hợp ngân hàng/QR/ví/cổng thanh toán. Chức năng hiện tạo mã giao dịch demo và cho phép nhân sự tài chính xác minh thủ công; không thu tiền và không tự chứng minh đã nhận tiền. Để kích hoạt cần chọn nhà cung cấp (ví dụ VietQR qua đối tác, VNPay, MoMo), đăng ký merchant, lưu secret ở server, xác minh chữ ký webhook, xử lý idempotency và đối soát sao kê.
-2. **Bảo vệ dữ liệu nhân sự:** đã có xác thực và giới hạn quyền ở API, nhưng trước khi dùng dữ liệu thật cần HTTPS, chính sách mật khẩu/2FA, quản lý phiên an toàn hơn (cookie HttpOnly), mã hóa bản sao lưu, phân loại trường nhạy cảm, quy trình cấp/thu hồi tài khoản, kiểm thử phân quyền và quy trình xử lý sự cố. Token trình duyệt hiện lưu tạm trong localStorage để đơn giản hóa bản demo.
-3. **Quản lý tài khoản:** tài khoản demo được seed; giao diện tạo/sửa tài khoản, mời người dùng, reset mật khẩu và khóa tài khoản chưa làm.
-4. **Báo cáo:** hiện xuất CSV. Mẫu báo cáo PDF/Excel theo biểu mẫu chính thức và luồng ký số chưa tích hợp.
-5. **Triển khai:** chưa có cấu hình domain/HTTPS, reverse proxy, backup tự động, giám sát và pipeline triển khai.
+Cổng quản trị hiện có: dashboard, CRUD tổ chức, hồ sơ nhân sự/hội viên theo phạm vi quyền, báo cáo nháp/gửi duyệt/yêu cầu sửa/phê duyệt/xuất CSV, quản lý khoản hội phí, tạo bản ghi giao dịch, xác minh thủ công và xuất CSV đối soát, nhật ký hệ thống, CMS tin tức/văn bản công khai, quản lý tài khoản và cấu hình hiển thị.
 
-## Cấu trúc
-- `server.js`: API, xác thực, phân quyền, SQLite, seed dữ liệu demo.
-- `public/index.html`: giao diện.
-- `public/styles.css`: thiết kế responsive.
-- `public/app.js`: điều khiển giao diện và gọi API.
-- `data/portal.db`: tự sinh khi chạy lần đầu.
-- `.env.example`: biến môi trường mẫu.
+## Phạm vi chưa được giả mạo là đã hoàn tất
 
-Dữ liệu nhân sự trong database hiện là dữ liệu giả minh họa. Hãy thay bằng dữ liệu hợp lệ chỉ sau khi hệ thống được triển khai và kiểm tra bảo mật.
+- Website công khai đang dùng nội dung mẫu và danh mục tài liệu mẫu; cần Hội cung cấp thông tin chính thức, ảnh, văn bản PDF, tin bài và đầu mối liên hệ.
+- Phần thu hội phí hiện là quy trình ghi nhận/xác minh thủ công; chưa tích hợp cổng thanh toán hoặc xác nhận giao dịch tự động từ ngân hàng. Không coi mã giao dịch demo là thanh toán thật.
+- Hồ sơ đính kèm trong báo cáo và chức năng quyên góp có chứng từ chưa được hoàn thiện.
+- SQLite phù hợp cho demo/triển khai nhỏ trên một máy chủ. Với nhiều người dùng đồng thời và dữ liệu nhạy cảm quy mô lớn, nên chuyển PostgreSQL về lâu dài. Đã bổ sung: JWT bắt buộc ở production, khóa tài khoản demo, index hiệu năng, sitemap/robots, giới hạn đăng nhập và test tự động.
+
+## Các trường dữ liệu hiện có
+
+- `units`: id, name, code, parent_id, unit_type, slug, description, address, phone, email, head_name, founded_at, status, is_public, search_key.
+- `personnel`: id, slug, full_name, title, position, group_role, term, bio, email, phone, unit_id, status, is_public, sort_order, search_key.
+- `users`: id, username, password_hash, full_name, role, unit_id, active, is_demo, created_at.
+- `reports`: id, title, period, content, unit_id, created_by, status, reviewer_id, review_note, submitted_at, reviewed_at, created_at.
+- `dues`: id, unit_id, period, amount, status, created_at.
+- `payments`: id, dues_id, transaction_ref, amount, method, status, provider_ref, note, created_by, verified_by, created_at, verified_at.
+- `audit_logs`: id, user_id, action, entity, entity_id, detail, created_at.
+- `posts`: id, slug, title, type, category, excerpt, content, cover_image, author, event_date, event_location, attachment, status, is_featured, view_count, published_at, created_by, search_key.
+- `documents`: id, slug, title, doc_number, doc_type, category, issuer, issued_at, summary, file_url, status, download_count, created_by, search_key.
+- `settings`: key, value, updated_at.
