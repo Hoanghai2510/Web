@@ -59,7 +59,7 @@ if (require.main === module) {
   app.listen(PORT, process.env.HOST || '0.0.0.0', () => {
     console.log(`Hoi portal running at http://${process.env.HOST || '0.0.0.0'}:${PORT}`);
     if (process.env.NODE_ENV !== 'production') {
-      console.warn('Development mode: set NODE_ENV=production + JWT_SECRET before deployment. Demo accounts are active.');
+      console.warn('Development mode: set NODE_ENV=production + JWT_SECRET before deployment. Demo accounts are disabled unless ALLOW_DEMO=1.');
     }
   });
 }

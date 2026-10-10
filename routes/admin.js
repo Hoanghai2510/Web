@@ -30,9 +30,9 @@ router.post('/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, limit: Number(p
     log(null, 'LOGIN_FAILED', 'user', username);
     return res.status(401).json({ error: 'Tài khoản hoặc mật khẩu không đúng' });
   }
-  if (user.is_demo && process.env.NODE_ENV === 'production' && process.env.ALLOW_DEMO !== '1') {
+  if (user.is_demo && process.env.ALLOW_DEMO !== '1') {
     log(null, 'LOGIN_BLOCKED_DEMO', 'user', username);
-    return res.status(403).json({ error: 'Tài khoản demo đã bị khóa ở môi trường production. Tạo tài khoản người dùng thật trước khi đưa hệ thống lên.' });
+    return res.status(403).json({ error: 'Tài khoản demo đã bị vô hiệu hóa. Tạo và sử dụng tài khoản người dùng thật trước khi đưa hệ thống lên.' });
   }
   const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: TOKEN_TTL });
   log(user.id, 'LOGIN', 'user', user.id);

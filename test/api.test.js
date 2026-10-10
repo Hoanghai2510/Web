@@ -48,8 +48,8 @@ after(() => {
   }
 });
 
-/* ---------- Demo lockdown (production without ALLOW_DEMO) ---------- */
-test('production blocks demo accounts unless ALLOW_DEMO=1', async () => {
+/* ---------- Demo lockdown (blocked unless ALLOW_DEMO=1) ---------- */
+test('demo accounts blocked unless ALLOW_DEMO=1', async () => {
   process.env.ALLOW_DEMO = '0';
   const blocked = await login('admin', 'admin123');
   assert.strictEqual(blocked.status, 403);

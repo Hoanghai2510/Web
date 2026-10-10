@@ -27,24 +27,24 @@ Kiểm thử chạy trên database tạm riêng (`data/test-portal.db`, tự xó
 npm test
 ```
 
-Suite bao phủ: public API + SEO (robots/sitemap), vòng đời bài viết/văn bản/đơn vị, phân quyền RBAC theo vai trò (admin/reviewer/unit_lead/finance), khóa tài khoản demo ở production, tải lên tệp (whitelist), chặn path traversal khi tải văn bản, ngăn XSS và quản lý tài khoản. Bắt đầu ở chế độ `NODE_ENV=production`.
+Suite bao phủ: public API + SEO (robots/sitemap), vòng đời bài viết/văn bản/đơn vị, phân quyền RBAC theo vai trò (admin/reviewer/unit_lead/finance), khóa tài khoản demo, tải lên tệp (whitelist), chặn path traversal khi tải văn bản, ngăn XSS và quản lý tài khoản. Chạy ở chế độ `NODE_ENV=production` với database tạm riêng.
 
 ## Triển khai production
 
 1. `cp .env.example .env`, đặt `NODE_ENV=production`, tạo `JWT_SECRET` ngẫu nhiên (không dùng giá trị mẫu). Ứng dụng sẽ **từ chối khởi động** nếu production thiếu `JWT_SECRET`.
 2. Cài PM2 hoặc systemd để chạy `npm start` bền bỉ, đặt **HTTPS qua reverse proxy** (Caddy/Nginx) trước cổng 3000.
-3. Tạo tài khoản quản trị thật, đổi mật khẩu demo rồi **khóa tài khoản demo**: ở production, login bằng tài khoản demo (`admin`/`reviewer`/`unitlead`/`finance`) trả về 403 trừ khi set `ALLOW_DEMO=1`.
+3. Tạo tài khoản quản trị thật rồi đăng nhập bằng tài khoản đó. **Tài khoản demo bị vô hiệu hóa trong mọi môi trường** trừ khi set `ALLOW_DEMO=1`; không dùng tài khoản demo với dữ liệu thật.
 4. Sao lưu định kỳ: dừng ứng dụng rồi copy cả `data/portal.db`, `-wal`, `-shm` (hoặc dùng `VACUUM INTO`), kiểm tra khôi phục thử.
 5. Kiểm tra lại phân quyền sau khi có dữ liệu thật. Với quy mô lớn/nhiều giao dịch nhạy cảm, nên chuyển sang PostgreSQL.
 
-## Tài khoản demo (chế độ phát triển)
+## Tài khoản demo (thử nghiệm nội bộ)
 
 - Quản trị viên: `admin` / `admin123`
 - Người duyệt báo cáo: `reviewer` / `review123`
 - Trưởng đơn vị: `unitlead` / `unit123`
 - Phụ trách tài chính: `finance` / `finance123`
 
-Các tài khoản này bị khóa tự động khi `NODE_ENV=production` (trừ khi bật `ALLOW_DEMO=1`). Không dùng tài khoản mẫu hoặc dữ liệu nhân sự giả lập trong môi trường thật.
+Các tài khoản này **mặc định bị vô hiệu hóa** trong mọi môi trường: login trả về 403 trừ khi set `ALLOW_DEMO=1` trong `.env` (chỉ dùng để kiểm thử nội bộ, tuyệt đối không bật khi có dữ liệu thật). Thông tin truy cập mẫu không được hiển thị trên giao diện đăng nhập công cộng.
 
 ## Đối chiếu tài liệu Word yêu cầu
 
